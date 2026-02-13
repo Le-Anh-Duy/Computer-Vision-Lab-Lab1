@@ -1,0 +1,15 @@
+# Build outputs
+bin/
+*.o
+*.obj
+*.exe
+
+# VS Code
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Others
+*.log
