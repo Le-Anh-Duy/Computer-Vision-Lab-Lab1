@@ -26,7 +26,8 @@ extern cv::Mat sobel(const cv::Mat &image, const std::vector<std::any> &args) {
         -1, -2, -1 
     };
     
-    cv::Mat gray = rgb2gray(image, {"0"});
+    cv::Mat gray;
+    if (image.channels() == 3) gray = rgb2gray(image, {"0"}); else gray = image;
     cv::Mat gauImage = gau(gray, {std::string("3")});
     
     cv::Mat res = cv::Mat(gray.size(), gray.type());

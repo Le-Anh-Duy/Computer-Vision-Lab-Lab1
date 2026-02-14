@@ -12,7 +12,10 @@ extern cv::Mat laplace(const cv::Mat &image, const std::vector<std::any> &args) 
     };
     
     
-    cv::Mat gray = rgb2gray(image, {0});
+    // cv::Mat gray = rgb2gray(image, {0});
+    
+    cv::Mat gray;
+    if (image.channels() == 3) gray = rgb2gray(image, {"0"}); else gray = image;
     cv::Mat blur = gau(gray, {std::string("3")});
     cv::Mat res = cv::Mat(blur.size(), blur.type());
 
