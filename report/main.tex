@@ -1,0 +1,431 @@
+\documentclass[a4paper,12pt]{article}
+
+% --- CẤU HÌNH TIẾNG VIỆT & FONT ---
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc} % Bắt buộc cho tiếng Việt
+\usepackage[vietnamese]{babel}
+\usepackage{lmodern}
+\usepackage{mathptmx} % Font giống Times New Roman
+
+% --- CÁC GÓI HỖ TRỢ ---
+\usepackage{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{svg}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{url}
+
+
+% --- CẤU HÌNH TRANG ---
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\linespread{1.2}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+% --- TRANG BÌA ---
+\begin{titlepage}
+	\centering
+    
+	% Logo trường (nếu có file logo.png thì bỏ comment dòng dưới)
+	\vspace{0.5cm}
+    
+	% Tên trường
+	{\large \textbf{ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH}\\}
+	{\large \textbf{TRƯỜNG ĐẠI HỌC KHOA HỌC TỰ NHIÊN}\\}
+    
+	\vspace{0.3cm}
+	\rule{0.6\textwidth}{0.5pt}
+	\vspace{1cm}
+    
+	% Môn học
+	{\Large \textbf{BÁO CÁO MÔN HỌC}\\}
+	\vspace{0.3cm}
+	{\LARGE \textbf{THỊ GIÁC MÁY TÍNH}}\\
+    
+	\vspace{2cm}
+    
+	% (Tuỳ chọn) logo khoa/trường ở giữa
+	% \begin{figure}[H]
+	%   \centering
+	%   \includegraphics[width=0.3\linewidth]{logo.png}
+	% \end{figure}
+    \includegraphics[width=0.25\textwidth]{logo.png}
+    
+	% Đề tài
+	\begin{minipage}{0.9\textwidth}
+		\centering
+		\vspace{0.3cm}
+		{\LARGE \textbf{Lab 1: Xử lý ảnh cơ bản với OpenCV trên WSL}}\\
+	\end{minipage}
+    
+	\vfill
+
+	% Thông tin sinh viên và giảng viên
+	\begin{minipage}{0.45\textwidth}
+		\begin{flushleft}
+			{\large \textbf{Sinh viên thực hiện:}\\}
+			\vspace{0.2cm}
+			Họ và tên: \textbf{Lê Anh Duy}\\
+			MSSV: \textbf{23127011}\\
+		\end{flushleft}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
+		\begin{flushleft}
+			{\large \textbf{Giảng viên hướng dẫn:}\\}
+			\vspace{0.2cm}
+			Phạm Minh Hoàng\\
+			Phạm Thanh Tùng\\
+			Võ Hoài Việt\\
+		\end{flushleft}
+	\end{minipage}
+    
+	\vspace{1.5cm}
+    
+	% Thời gian
+	{\large Thành phố Hồ Chí Minh, \today}
+    
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Giới thiệu}
+
+Mục tiêu của bài Lab 1 là làm quen với các phép xử lý ảnh cơ bản sử dụng thư viện OpenCV mà không sử dụng các thư viện có sẵn, chỉ sử dụng các hàm đọc và ghi được cung cấp. Chương trình được cài đặt bằng C++17, biên dịch bằng \texttt{g++} và sử dụng OpenCV để đọc, ghi và thao tác trên ảnh số. Các phép biến đổi được hiện thực bao gồm:
+
+\begin{itemize}
+	\item Chuyển ảnh màu sang ảnh xám (\texttt{rgb2gray}).
+	\item Chỉnh độ sáng (\texttt{brightness}).
+	\item Chỉnh độ tương phản (\texttt{contrast}).
+	\item Lọc trung bình (\texttt{avg}).
+	\item Lọc trung vị (\texttt{med}).
+	\item Lọc Gauss (\texttt{gau}).
+	\item Phát hiện biên Sobel (\texttt{sobel}).
+	\item Phát hiện biên Laplace (\texttt{laplace}).
+\end{itemize}
+
+Github: \url{https://github.com/Le-Anh-Duy/Computer-Vision-Lab-Lab1}
+
+\section{Môi trường và cách chạy chương trình}
+
+\subsection{Môi trường WSL và các gói phụ thuộc}
+
+Chương trình được thiết kế để chạy trên WSL (Ubuntu). Các gói cần cài đặt:
+
+\begin{itemize}
+	\item \texttt{build-essential}: cung cấp \texttt{g++}, \texttt{make} và các công cụ build cơ bản.
+	\item \texttt{pkg-config}: dùng để truy vấn cflags/libs của OpenCV.
+	\item \texttt{libopencv-dev}: thư viện và header OpenCV (\texttt{opencv2/\dots}).
+\end{itemize}
+
+Lệnh cài đặt trong Ubuntu (WSL):
+
+\begin{verbatim}
+sudo apt update
+sudo apt install build-essential pkg-config libopencv-dev
+\end{verbatim}
+
+\subsection{Cách build}
+
+Từ WSL, di chuyển đến thư mục project (ví dụ):
+
+\begin{verbatim}
+cd /mnt/d/Coding/School/Y3-K2/TGMT/Cpp/Lab1
+make
+\end{verbatim}
+
+Sau khi build thành công, file thực thi sẽ nằm tại:
+
+\begin{verbatim}
+bin/main
+\end{verbatim}
+
+Để dọn các file sinh ra trong quá trình biên dịch:
+
+\begin{verbatim}
+make clean
+\end{verbatim}
+
+\subsection{Cách chạy chương trình}
+
+Chương trình nhận tham số dòng lệnh theo cú pháp:
+
+\begin{verbatim}
+./bin/main <command> <input_path> <output_path> [param]
+\end{verbatim}
+
+Trong đó:
+
+\begin{itemize}
+	\item \texttt{<command>}: chuỗi lệnh chọn thuật toán (ví dụ \texttt{-rgb2gray}).
+	\item \texttt{<input\_path>}: đường dẫn ảnh đầu vào.
+	\item \texttt{<output\_path>}: đường dẫn lưu ảnh kết quả.
+	\item \texttt{[param]}: tham số phụ tuỳ thuật toán (kích thước kernel, hệ số độ sáng, độ tương phản, \ldots).
+\end{itemize}
+
+Ví dụ chạy trên WSL với đường dẫn ảnh dạng \texttt{/mnt/d/\dots}:
+
+\begin{verbatim}
+./bin/main -rgb2gray lena.png output/lena_gray.png
+./bin/main -brightness lena.png output/lena_brightness_50.png 50
+./bin/main -contrast lena.png output/lena_contrast_1.5.png 1.5
+./bin/main -avg lena.png output/lena_avg_5.png 5
+\end{verbatim}
+
+\section{Thiết kế chương trình}
+
+\subsection{Cấu trúc thư mục}
+
+Project được tổ chức với các thư mục và file chính như sau:
+
+\begin{itemize}
+	\item \texttt{Makefile}: file build chính, dùng \texttt{pkg-config} để link OpenCV.
+	\item \texttt{src/}: mã nguồn C++
+	\begin{itemize}
+		\item \texttt{main.cpp}: điểm vào chương trình, đọc tham số dòng lệnh, gọi hàm xử lý ảnh tương ứng.
+		\item \texttt{functions.cpp}: ánh xạ chuỗi lệnh (ví dụ \texttt{-rgb2gray}) sang con trỏ hàm xử lý.
+		\item \texttt{rgb2gray.cpp}, \texttt{brightness.cpp}, \texttt{contrast.cpp}, \texttt{avg.cpp},
+					\texttt{med.cpp}, \texttt{gau.cpp}, \texttt{sobel.cpp}, \texttt{laplace.cpp}:
+					hiện thực các thuật toán xử lý ảnh cụ thể.
+		\item \texttt{convolution.cpp}: hiện thực hàm tích chập tổng quát \texttt{apply\_filter}.
+	\end{itemize}
+	\item \texttt{include/}: các file header tương ứng, khai báo hàm và kiểu dữ liệu.
+	\item \texttt{bin/}: chứa file thực thi sau khi build.
+	\item \texttt{output/}: chứa các ảnh kết quả sau khi chạy chương trình.
+\end{itemize}
+
+\subsection{Cơ chế chọn thuật toán}
+
+File \texttt{functions.cpp} định nghĩa hai vector:
+
+\begin{itemize}
+	\item \texttt{commands\_list}: danh sách các chuỗi lệnh như \texttt{-rgb2gray}, \texttt{-contrast}, \ldots
+	\item \texttt{functions\_list}: danh sách các con trỏ hàm tương ứng kiểu \texttt{ImageFunc}.
+\end{itemize}
+
+Hàm \texttt{get\_cv\_func} duyệt qua danh sách này và trả về con trỏ hàm ứng với \texttt{cmd}. Trong \texttt{main.cpp}, chương trình đọc \texttt{argv[1]} làm lệnh, \texttt{argv[2]} là ảnh đầu vào, \texttt{argv[3]} là ảnh đầu ra và \texttt{argv[4]} (nếu có) làm tham số chuỗi cho thuật toán.
+
+\section{Các thuật toán xử lý ảnh}
+
+\textbf{Lưu ý chung:} Trong tất cả các thuật toán sử dụng cửa sổ trượt (sliding window) hay kernel dưới đây, kích thước kernel $k \times k$ \textbf{bắt buộc phải là số lẻ} (ví dụ: $3\times3, 5\times5$) để xác định chính xác điểm tâm (anchor point) của mặt nạ. Ngoài ra, để giữ nguyên kích thước ảnh sau khi tích chập, ảnh đầu vào được xử lý biên (padding) bằng phương pháp điền số 0 (Zero Padding).
+
+\subsection{Chuyển ảnh màu sang xám (\texttt{rgb2gray})}
+
+\textbf{Mục đích:} Chuyển ảnh màu BGR sang ảnh xám một kênh (grayscale) để phục vụ các bước xử lý tiếp theo.
+
+\textbf{Ý tưởng chính:} Với mỗi pixel, sử dụng công thức độ chói (Luminance) theo chuẩn \textbf{Rec. 601}\footnote{Tham khảo công thức Grayscale: \url{https://en.wikipedia.org/wiki/Grayscale}}:
+
+\begin{equation}
+Y = 0{,}299R + 0{,}587G + 0{,}114B
+\end{equation}
+
+Giá trị $Y$ được làm tròn và gán cho ảnh kết quả thuộc kiểu \texttt{CV\_8UC1} (ảnh đơn kênh, 8-bit không dấu).
+
+\subsection{Chỉnh độ sáng (\texttt{brightness})}
+
+\textbf{Mục đích:} Tăng hoặc giảm độ sáng toàn ảnh.
+
+\textbf{Ý tưởng chính:} Cộng một hằng số $bias$ vào giá trị pixel. Để tối ưu tốc độ, thuật toán sử dụng bảng tra (Look-up Table - LUT).
+\begin{equation}
+I_{out} = \text{clamp}(I_{in} + \text{bias}, 0, 255)
+\end{equation}
+Chi tiết về thay đổi độ sáng có thể tham khảo tại OpenCV Documentation\footnote{\url{https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_linear_transform.html}}.
+
+\subsection{Chỉnh độ tương phản (\texttt{contrast})}
+
+\textbf{Mục đích:} Thay đổi độ tương phản giúp ảnh sắc nét hơn hoặc dịu đi.
+
+\textbf{Ý tưởng chính:} Sử dụng công thức tuyến tính quanh mức xám trung bình 128:
+\begin{equation}
+I_{out} = \text{clamp}(\alpha (I_{in} - 128) + 128, 0, 255)
+\end{equation}
+Trong đó $\alpha$ là hệ số tương phản ($\alpha > 1$: tăng tương phản).
+
+\subsection{Lọc trung bình (\texttt{avg})}
+
+\textbf{Mục đích:} Làm mờ ảnh, giảm nhiễu hạt.
+
+\textbf{Ý tưởng chính:} Thay thế giá trị pixel trung tâm bằng trung bình cộng của các pixel trong cửa sổ $k \times k$ (với $k$ là số lẻ).
+Kernel tích chập $H$ có dạng:
+\begin{equation}
+H = \frac{1}{k^2} \begin{bmatrix} 1 & \dots & 1 \\ \vdots & \ddots & \vdots \\ 1 & \dots & 1 \end{bmatrix}
+\end{equation}
+
+\subsection{Lọc trung vị (\texttt{med})}
+
+\textbf{Mục đích:} Khử nhiễu muối tiêu (salt-and-pepper noise) hiệu quả mà không làm mờ biên quá mức.
+
+\textbf{Ý tưởng chính:} Với mỗi cửa sổ $k \times k$ ($k$ lẻ):
+\begin{enumerate}
+    \item Thu thập tất cả giá trị pixel trong cửa sổ vào một mảng.
+    \item Sắp xếp mảng theo thứ tự tăng dần.
+    \item Chọn giá trị ở giữa (median) làm giá trị mới cho pixel trung tâm\footnote{Median Filter: \url{https://en.wikipedia.org/wiki/Median_filter}}.
+\end{enumerate}
+
+\subsection{Lọc Gauss (\texttt{gau})}
+
+\textbf{Mục đích:} Làm mờ ảnh một cách tự nhiên hơn lọc trung bình, dùng để giảm nhiễu Gaussian.
+
+\textbf{Ý tưởng chính:} Sử dụng kernel $k \times k$ ($k$ lẻ) với các trọng số tuân theo phân phối Gauss 2D:
+\begin{equation}
+G(x, y) = \frac{1}{2\pi\sigma^2} \exp\left(-\frac{x^2 + y^2}{2\sigma^2}\right)
+\end{equation}
+Sau khi tính toán, kernel được chuẩn hoá (normalize) sao cho tổng các phần tử bằng 1 để không làm thay đổi độ sáng trung bình của ảnh\footnote{Gaussian Blur: \url{https://en.wikipedia.org/wiki/Gaussian_blur}}.
+
+\subsection{Phát hiện biên Sobel (\texttt{sobel})}
+
+\textbf{Mục đích:} Tìm biên của vật thể dựa trên sự thay đổi cường độ sáng. Kết quả là một ảnh xám thể hiện độ lớn của gradient.
+
+\textbf{Ý tưởng chính:}
+\begin{itemize}
+    \item Dùng 2 kernel $3\times3$ (số lẻ) để tính đạo hàm theo phương $x$ ($G_x$) và phương $y$ ($G_y$).
+    \item \textbf{Lưu ý cài đặt:} Các giá trị đạo hàm có thể âm, do đó cần tính toán trên kiểu dữ liệu có dấu (VD: \texttt{float} hoặc \texttt{short}) sau đó lấy giá trị tuyệt đối.
+    \item Độ lớn Gradient tổng hợp tại mỗi điểm\footnote{Sobel Operator: \url{https://en.wikipedia.org/wiki/Sobel_operator}}:
+    \begin{equation}
+    G = \sqrt{G_x^2 + G_y^2} \approx |G_x| + |G_y|
+    \end{equation}
+    \item Kết quả cuối cùng được chuyển về đoạn $[0, 255]$ (ảnh grayscale).
+\end{itemize}
+
+\subsection{Phát hiện biên Laplace (\texttt{laplace})}
+
+\textbf{Mục đích:} Phát hiện biên dựa trên đạo hàm bậc hai, nhạy cảm với các thay đổi đột ngột. Output là ảnh đen trắng.
+
+\textbf{Ý tưởng chính:}
+\begin{itemize}
+    \item Áp dụng kernel Laplace $3\times3$ (thường có giá trị tâm là 4 hoặc 8, xung quanh là -1).
+    \item Tương tự Sobel, kết quả tích chập có thể âm. Cần lấy \textbf{giá trị tuyệt đối} hoặc chuẩn hoá để hiển thị được trên ảnh xám 8-bit.
+\end{itemize}
+Tham khảo Laplace Operator tại OpenCV Docs\footnote{\url{https://docs.opencv.org/3.4/d5/db5/tutorial_laplace_operator.html}}.
+
+\subsection{Phát hiện biên Laplace (\texttt{laplace})}
+
+\textbf{Mục đích:} làm nổi bật các vùng có biến thiên cường độ theo mọi hướng (biên).
+
+\textbf{Ý tưởng chính:}
+
+\begin{itemize}
+	\item Chuyển ảnh sang xám và làm mờ nhẹ bằng lọc Gauss 3$\times$3.
+	\item Áp dụng kernel Laplace 3$\times$3 với trọng số trung tâm âm lớn và các ô xung quanh dương.
+	\item Sử dụng \texttt{apply\_filter} để tính tích chập và thu được ảnh biên.
+\end{itemize}
+
+\section{Kết quả thực nghiệm}
+
+Trong phần này, ta sử dụng ảnh chuẩn \texttt{lena.png} làm ảnh đầu vào, sau đó áp dụng các thuật toán để quan sát trực quan hiệu ứng.
+
+\subsection{Chuyển xám và làm mờ}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../lena.png}
+		\caption{Ảnh gốc}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_gray.png}
+		\caption{Ảnh xám}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_gau_5.png}
+		\caption{Gauss 5$\times$5}
+	\end{subfigure}
+	\caption{Kết quả chuyển xám và làm mờ bằng lọc Gauss.}
+\end{figure}
+
+\subsection{Ảnh hưởng của độ sáng và tương phản}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_brightness_50.png}
+		\caption{Sáng +50}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_brightness_-50.png}
+		\caption{Sáng -50}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_contrast_0.5.png}
+		\caption{Contrast 0.5}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_contrast_1.5.png}
+		\caption{Contrast 1.5}
+	\end{subfigure}
+	\caption{So sánh các mức độ sáng và tương phản khác nhau.}
+\end{figure}
+
+\subsection{Lọc trung bình, trung vị và Gauss}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_avg_5.png}
+		\caption{Avg 5$\times$5}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_med_5.png}
+		\caption{Med 5$\times$5}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_gau_5.png}
+		\caption{Gau 5$\times$5}
+	\end{subfigure}
+	\caption{So sánh các bộ lọc làm mờ/khử nhiễu với kernel 5$\times$5.}
+\end{figure}
+
+\subsection{Phát hiện biên Sobel và Laplace}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_sobel.png}
+		\caption{Biên Sobel}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/lena_laplace.png}
+		\caption{Biên Laplace}
+	\end{subfigure}
+	\caption{Kết quả phát hiện biên với Sobel và Laplace.}
+\end{figure}
+
+\section{Kết luận}
+
+Trong bài Lab này, em đã:
+
+\begin{itemize}
+	\item Thiết lập môi trường lập trình C++ với OpenCV trên WSL.
+	\item Xây dựng chương trình dòng lệnh có khả năng áp dụng nhiều phép biến đổi ảnh khác nhau thông qua tham số \texttt{command}.
+	\item Hiện thực và thử nghiệm các thuật toán xử lý ảnh cơ bản: chuyển xám, chỉnh độ sáng/tương phản, các bộ lọc trung bình, trung vị, Gauss và các toán tử phát hiện biên Sobel, Laplace.
+	\item Quan sát, so sánh trực quan tác động của từng thuật toán lên ảnh chuẩn \texttt{lena.png}.
+\end{itemize}
+
+Qua đó, em hiểu rõ hơn về cách ánh xạ các công thức xử lý tín hiệu rời rạc vào cài đặt C++, cũng như cách tổ chức project, viết Makefile và sử dụng OpenCV trong thực tế.
+
+
+\end{document}
+
+
