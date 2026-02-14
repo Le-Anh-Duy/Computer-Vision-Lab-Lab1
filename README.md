@@ -295,3 +295,14 @@ Các lệnh được định nghĩa trong `functions.cpp`:
 | Sobel | Laplace |
 |-------|---------|
 | ![sobel](output/lena_sobel.png) | ![laplace](output/lena_laplace.png) |
+
+### 7.5. Lọc trung vị (median)
+
+- Lệnh ví dụ:
+  - `./bin/main -med lena.png output/lena_med_3.png 3`
+  - `./bin/main -med lena.png output/lena_med_5.png 5`
+  - `./bin/main -med lena.png output/lena_med_7.png 7`
+
+| Med 3×3 | Med 5×5 | Med 7×7 |
+|---------|---------|---------|
+| ![med3](output/lena_med_3.png) | ![med5](output/lena_med_5.png) | ![med7](output/lena_med_7.png) |
