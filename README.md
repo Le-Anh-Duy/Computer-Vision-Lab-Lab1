@@ -245,3 +245,53 @@ Các lệnh được định nghĩa trong `functions.cpp`:
   - Duyệt từng pixel, tính tổng \( \sum I(x+i, y+j) * K(i, j) \), bỏ qua các điểm vượt biên.
   - Hỗ trợ cả ảnh 1 kênh và 3 kênh, clamp kết quả [0, 255].
 - Được tái sử dụng cho các bộ lọc như trung bình, Gauss, Sobel, Laplace.
+
+---
+
+## 7. Ví dụ kết quả trên ảnh lena.png
+
+Ảnh gốc: `lena.png`
+
+### 7.1. Chuyển xám và làm mờ
+
+- Lệnh:
+  - `./bin/main -rgb2gray lena.png output/lena_gray.png`
+  - `./bin/main -gau lena.png output/lena_gau_5.png 5`
+
+| Ảnh gốc | Ảnh xám | Gauss 5×5 |
+|--------|---------|-----------|
+| ![lena](lena.png) | ![lena_gray](output/lena_gray.png) | ![lena_gau_5](output/lena_gau_5.png) |
+
+### 7.2. Độ sáng và tương phản
+
+- Lệnh ví dụ:
+  - `./bin/main -brightness lena.png output/lena_brightness_50.png 50`
+  - `./bin/main -brightness lena.png output/lena_brightness_-50.png -50`
+  - `./bin/main -contrast lena.png output/lena_contrast_0.5.png 0.5`
+  - `./bin/main -contrast lena.png output/lena_contrast_1.5.png 1.5`
+
+| Sáng +50 | Sáng -50 | Contrast 0.5 | Contrast 1.5 |
+|----------|----------|--------------|---------------|
+| ![b+50](output/lena_brightness_50.png) | ![b-50](output/lena_brightness_-50.png) | ![c0.5](output/lena_contrast_0.5.png) | ![c1.5](output/lena_contrast_1.5.png) |
+
+### 7.3. Lọc trung bình và Gauss
+
+- Lệnh ví dụ:
+  - `./bin/main -avg lena.png output/lena_avg_3.png 3`
+  - `./bin/main -avg lena.png output/lena_avg_5.png 5`
+  - `./bin/main -gau lena.png output/lena_gau_3.png 3`
+  - `./bin/main -gau lena.png output/lena_gau_7.png 7`
+
+| Avg 3×3 | Avg 5×5 | Gau 3×3 | Gau 7×7 |
+|---------|---------|---------|---------|
+| ![avg3](output/lena_avg_3.png) | ![avg5](output/lena_avg_5.png) | ![gau3](output/lena_gau_3.png) | ![gau7](output/lena_gau_7.png) |
+
+### 7.4. Phát hiện biên Sobel và Laplace
+
+- Lệnh:
+  - `./bin/main -sobel lena.png output/lena_sobel.png 0`
+  - `./bin/main -laplace lena.png output/lena_laplace.png 0`
+
+| Sobel | Laplace |
+|-------|---------|
+| ![sobel](output/lena_sobel.png) | ![laplace](output/lena_laplace.png) |
