@@ -144,16 +144,16 @@ Các lệnh được định nghĩa trong `functions.cpp`:
 8. Phát hiện biên Sobel:
 
 ```bash
-./bin/main -sobel input.jpg output_sobel.jpg 0
+./bin/main -sobel input.jpg output_sobel.jpg
 ```
 
 9. Phát hiện biên Laplace:
 
 ```bash
-./bin/main -laplace input.jpg output_laplace.jpg 0
+./bin/main -laplace input.jpg output_laplace.jpg
 ```
 
-> Lưu ý: Với các thuật toán mà code chưa dùng tham số, vẫn cần truyền 1 giá trị placeholder (ví dụ `0`) để tránh việc `argc` thiếu.
+> Lưu ý: Với các thuật toán mà code chưa dùng tham số, vẫn cần truyền 1 giá trị placeholder (ví dụ `0`) vào khi gọi hàm để tránh việc `argv` thiếu.
 
 ## 5. Ghi chú về VS Code và IntelliSense
 
